@@ -28,17 +28,17 @@ public class Drivetrain {
         initMotors();
     }
     public void initMotors() {
-        motors.put(DriveMotors.D1, myHardwarmap.dcMotor.get("D1"));
-        motors.put(DriveMotors.D2, myHardwarmap.dcMotor.get("D2"));
-        motors.put(DriveMotors.D3, myHardwarmap.dcMotor.get("D3"));
-        motors.put(DriveMotors.D4, myHardwarmap.dcMotor.get("D4"));
+        motors.put(DriveMotors.D1, myHardwarmap.dcMotor.get("backRight"));
+        motors.put(DriveMotors.D2, myHardwarmap.dcMotor.get("backLeft"));
+        motors.put(DriveMotors.D3, myHardwarmap.dcMotor.get("frontRight"));
+        motors.put(DriveMotors.D4, myHardwarmap.dcMotor.get("frontLeft"));
 
         motors.get(DriveMotors.D2).setDirection(DcMotorSimple.Direction.REVERSE);
         motors.get(DriveMotors.D4).setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void drive() {
-        drive(gamepad.left_stick_x, -gamepad.left_stick_y, -gamepad1.right_stick_x);
+        drive((double) gamepad.left_stick_x, -(double) gamepad.left_stick_y, -(double) gamepad.right_stick_x);
     }
 
     /**
