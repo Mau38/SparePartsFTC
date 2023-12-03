@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.roadRunner.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 /*
  * Constants shared between multiple drive types.
@@ -92,6 +95,16 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
+    public static RevHubOrientationOnRobot revHubOrientation= new RevHubOrientationOnRobot(
+            // Check Values
+            new Quaternion(
+                    (float) Math.cos(.5 * 90),
+                    0.0f,
+                    0.0f,
+                    (float) Math.sin(.5 * 90),
+                    System.nanoTime()
+            )
+    );
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

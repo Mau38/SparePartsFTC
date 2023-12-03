@@ -9,11 +9,15 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+
+import org.firstinspires.ftc.teamcode.roadRunner.util.Encoder;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Drivetrain {
     Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
+    Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
     Gamepad gamepad;
     HardwareMap myHardwarmap;
 
