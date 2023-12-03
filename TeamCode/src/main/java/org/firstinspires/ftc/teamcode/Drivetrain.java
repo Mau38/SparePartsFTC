@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,7 +9,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 
 import org.firstinspires.ftc.teamcode.roadRunner.util.Encoder;
 
@@ -30,7 +30,7 @@ public class Drivetrain {
         initEncoders();
     }
     public void initMotors() {
-        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight`"));
+        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight"));
         motors.put(DriveMotors.BACK_LEFT, myHardwarmap.dcMotor.get("backLeft"));
         motors.put(DriveMotors.FRONT_RIGHT, myHardwarmap.dcMotor.get("frontRight"));
         motors.put(DriveMotors.FRONT_LEFT, myHardwarmap.dcMotor.get("frontLeft"));
@@ -40,9 +40,9 @@ public class Drivetrain {
     }
 
     public void initEncoders() {
-        encoders.put(EncoderNames.LEFT, myHardwarmap.get(Encoder.class, "Left Encoder"));
-        encoders.put(EncoderNames.RIGHT, myHardwarmap.get(Encoder.class, "Right Encoder"));
-        encoders.put(EncoderNames.BACK, myHardwarmap.get(Encoder.class, "Back Encoder"));
+        encoders.put(EncoderNames.RIGHT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backRight")));
+        encoders.put(EncoderNames.LEFT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backLeft")));
+        encoders.put(EncoderNames.BACK, new Encoder(myHardwarmap.get(DcMotorEx.class, "frontRight")));
 
         encoders.get(EncoderNames.BACK).setDirection(Encoder.Direction.REVERSE);
     }
