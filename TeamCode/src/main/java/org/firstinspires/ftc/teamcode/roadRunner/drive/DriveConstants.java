@@ -99,10 +99,10 @@ public class DriveConstants {
             // Check Values
             new Quaternion(
                     (float) Math.cos(.5 * 90),
-                    0.0f,
-                    0.0f,
                     (float) Math.sin(.5 * 90),
-                    System.nanoTime()
+                    0.0f,
+                    0.0f,
+                   System.nanoTime()
             )
     );
 

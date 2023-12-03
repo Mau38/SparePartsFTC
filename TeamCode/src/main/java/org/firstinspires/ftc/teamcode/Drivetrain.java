@@ -27,6 +27,7 @@ public class Drivetrain {
         gamepad = _gamepad;
         myHardwarmap = _myHardwarmap;
         initMotors();
+        initEncoders();
     }
     public void initMotors() {
         motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight`"));
@@ -36,6 +37,14 @@ public class Drivetrain {
 
         motors.get(DriveMotors.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
         motors.get(DriveMotors.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public void initEncoders() {
+        encoders.put(EncoderNames.LEFT, myHardwarmap.get(Encoder.class, "Left Encoder"));
+        encoders.put(EncoderNames.RIGHT, myHardwarmap.get(Encoder.class, "Right Encoder"));
+        encoders.put(EncoderNames.BACK, myHardwarmap.get(Encoder.class, "Back Encoder"));
+
+        encoders.get(EncoderNames.BACK).setDirection(Encoder.Direction.REVERSE);
     }
 
     public void drive() {
