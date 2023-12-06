@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Drivetrain {
+
+    final double X_FACTOR = .7;
+    final double Y_FACTOR = .7;
+    final double TURN_FACTOR = .7;
     Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
     Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
     Gamepad gamepad;
@@ -48,9 +52,9 @@ public class Drivetrain {
     }
 
     public void drive() {
-        double x = gamepad.left_stick_x;
-        double y = -gamepad.left_stick_y;
-        double turn = -gamepad.right_stick_x;
+        double x = gamepad.left_stick_x * X_FACTOR;
+        double y = -gamepad.left_stick_y * Y_FACTOR;
+        double turn = -gamepad.right_stick_x * TURN_FACTOR;
 
         double theta = Math.atan2(y, x);
         double power = Math.hypot(x, y);

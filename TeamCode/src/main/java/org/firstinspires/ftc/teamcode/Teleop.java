@@ -18,12 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
-
-@TeleOp(name="Normal")
+@TeleOp(name="CompTeleop")
 public class Teleop extends OpMode {
 
     Drivetrain mecanum;
@@ -33,6 +28,7 @@ public class Teleop extends OpMode {
     IMU imu;
     int tolerance = 10;
     int armSetpoint = 400;
+
 
     @Override
     public void init() {

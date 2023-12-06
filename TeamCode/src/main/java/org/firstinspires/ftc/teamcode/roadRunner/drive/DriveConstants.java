@@ -49,8 +49,9 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.8898; // in
-    public static double GEAR_RATIO = 1.0416666666666667; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 25.0/24.0; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 9.92126; // in
+    // 12.3 G
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -58,9 +59,13 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kV = .01120;
+    // .0112 G
+    public static double kA = .00004;
+    // .00004 G
+    public static double kStatic = .066;
+    // Overcome static friction
+    // .066 G
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -90,10 +95,10 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 76.22218817186766;
-    public static double MAX_ACCEL = 76.22218817186766;
-    public static double MAX_ANG_VEL = Math.toRadians(360);
-    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
+    public static double MAX_ANG_VEL = Math.toRadians(90);
+    public static double MAX_ANG_ACCEL = Math.toRadians(90);
 
     public static RevHubOrientationOnRobot revHubOrientation= new RevHubOrientationOnRobot(
             // Check Values

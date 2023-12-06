@@ -16,6 +16,10 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+    static final float X_FACTOR = .7f;
+    static final float Y_FACTOR = .7f;
+    static final float TURN_FACTOR = .7f;
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -27,9 +31,9 @@ public class LocalizationTest extends LinearOpMode {
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y * X_FACTOR,
+                            -gamepad1.left_stick_x * Y_FACTOR,
+                            -gamepad1.right_stick_x * TURN_FACTOR
                     )
             );
 

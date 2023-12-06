@@ -90,7 +90,7 @@ public final class LogFiles {
         public double trackingWheelRadius = StandardTrackingWheelLocalizer.WHEEL_RADIUS;
         public double trackingGearRatio = StandardTrackingWheelLocalizer.GEAR_RATIO;
         public double trackingLateralDistance = StandardTrackingWheelLocalizer.LATERAL_DISTANCE;
-        public double trackingForwardOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSET;
+        public double trackingForwardOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSETFB;
 
         public Quaternion HUB_ORIENTATION = DriveConstants.revHubOrientation.imuCoordinateSystemOrientationFromPerspectiveOfRobot();
         public List<Double> targetYs = new ArrayList<>();
