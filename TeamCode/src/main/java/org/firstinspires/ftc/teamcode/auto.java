@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "AutoForwardExample")
+@Autonomous(name = "auto")
 public class auto extends LinearOpMode {
 
     private Drivetrain mecanum;
@@ -33,6 +33,8 @@ public class auto extends LinearOpMode {
         initializeMotors();
 
         waitForStart();
+
+        //change to 100 and 3 to make it go forward for 3 seconds at 100% motor capacity
 
         // 1st Auto: Go forward for 3 seconds at 50% motor capacity MAIN AUTO!!!!!!!!!
         moveForwardForDuration(0.5, 3);
