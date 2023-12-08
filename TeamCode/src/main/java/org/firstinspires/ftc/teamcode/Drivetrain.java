@@ -1,24 +1,40 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import org.firstinspires.ftc.teamcode.roadRunner.util.Encoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Drivetrain {
+
+    final double X_FACTOR = .7;
+    final double Y_FACTOR = .7;
+    final double TURN_FACTOR = .7;
     Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
+    Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
     Gamepad gamepad;
     HardwareMap myHardwarmap;
+
+    YawPitchRollAngles botAngles;
+
     public Drivetrain(Gamepad _gamepad, HardwareMap _myHardwarmap) {
         gamepad = _gamepad;
         myHardwarmap = _myHardwarmap;
         initMotors();
+        initEncoders();
     }
     public void initMotors() {
-        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight`"));
+        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight"));
         motors.put(DriveMotors.BACK_LEFT, myHardwarmap.dcMotor.get("backLeft"));
         motors.put(DriveMotors.FRONT_RIGHT, myHardwarmap.dcMotor.get("frontRight"));
         motors.put(DriveMotors.FRONT_LEFT, myHardwarmap.dcMotor.get("frontLeft"));
@@ -27,10 +43,18 @@ public class Drivetrain {
         motors.get(DriveMotors.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
+    public void initEncoders() {
+        encoders.put(EncoderNames.RIGHT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backRight")));
+        encoders.put(EncoderNames.LEFT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backLeft")));
+        encoders.put(EncoderNames.BACK, new Encoder(myHardwarmap.get(DcMotorEx.class, "frontRight")));
+
+        encoders.get(EncoderNames.BACK).setDirection(Encoder.Direction.REVERSE);
+    }
+
     public void drive() {
-        double x = gamepad.left_stick_x;
-        double y = -gamepad.left_stick_y;
-        double turn = -gamepad.right_stick_x;
+        double x = gamepad.left_stick_x * X_FACTOR;
+        double y = -gamepad.left_stick_y * Y_FACTOR;
+        double turn = -gamepad.right_stick_x * TURN_FACTOR;
 
         double theta = Math.atan2(y, x);
         double power = Math.hypot(x, y);
@@ -52,6 +76,49 @@ public class Drivetrain {
             });
         }
     }
+
+    /**
+     *
+     * @param myIMU Pass in an IMU
+     * @brief Field centric driving
+     */
+
+    public void drive(IMU myIMU) {
+        botAngles = myIMU.getRobotYawPitchRollAngles();
+
+        double botHeading = botAngles.getYaw(AngleUnit.RADIANS);
+
+        double x = gamepad.left_stick_x;
+        double y = -gamepad.left_stick_y;
+        double rx = gamepad.right_stick_x;
+
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        motors.get(DriveMotors.BACK_RIGHT).setPower(backRightPower);
+        motors.get(DriveMotors.BACK_LEFT).setPower(backLeftPower);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower(frontRightPower);
+        motors.get(DriveMotors.FRONT_LEFT).setPower(frontLeftPower);
+    }
+
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param turn
+     */
 
     public void drive(double x, double y, double turn) {
 
