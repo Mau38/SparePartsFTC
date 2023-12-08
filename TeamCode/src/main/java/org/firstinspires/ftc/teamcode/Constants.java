@@ -4,10 +4,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 public class Constants {
-
-    public static int currentPosition = 100;
-    public static ServoImplEx claw1, claw2, wrist;
-    public static DcMotorEx motorA, motorB;
     public static final int tolerance = 10;
     public static final int armStow = 400;
     public static final int startingArmPos = 100;
