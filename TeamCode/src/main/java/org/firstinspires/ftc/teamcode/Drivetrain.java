@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +16,9 @@ public class Drivetrain {
     Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
     Gamepad gamepad;
     HardwareMap myHardwarmap;
+
+    YawPitchRollAngles botAngles;
+
     public Drivetrain(Gamepad _gamepad, HardwareMap _myHardwarmap) {
         gamepad = _gamepad;
         myHardwarmap = _myHardwarmap;
@@ -52,6 +59,32 @@ public class Drivetrain {
             });
         }
     }
+
+    /**
+     *
+     * @param myIMU Pass in an IMU
+     * @brief Field centric driving
+     */
+
+    public void drive(IMU myIMU) {
+        myIMU.resetYaw();
+
+        botAngles = myIMU.getRobotYawPitchRollAngles();
+
+        double botYaw = botAngles.getYaw(AngleUnit.RADIANS);
+
+        double rotX = gamepad.left_stick_x * Math.cos(-botYaw) - -gamepad.left_stick_y * Math.sin(-botYaw);
+        double rotY = gamepad.left_stick_x * Math.sin(-botYaw) + -gamepad.left_stick_y * Math.cos(-botYaw);
+
+        drive(rotX, rotY, -gamepad.right_stick_x);
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param turn
+     */
 
     public void drive(double x, double y, double turn) {
 

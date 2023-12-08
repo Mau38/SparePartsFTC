@@ -2,17 +2,22 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Constants.armDropOff;
 import static org.firstinspires.ftc.teamcode.Constants.armIntake;
+import static org.firstinspires.ftc.teamcode.Constants.controlHubRotation;
 import static org.firstinspires.ftc.teamcode.Constants.startingArmPos;
 import static org.firstinspires.ftc.teamcode.Constants.wristIntake;
 import static org.firstinspires.ftc.teamcode.Constants.wristStowOrOutTake;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 @TeleOp(name="Normal")
 public class Teleop extends OpMode {
@@ -21,6 +26,7 @@ public class Teleop extends OpMode {
     DcMotorEx motorA, motorB;
     int currentPosition = 100;
     ServoImplEx claw1, claw2, wrist;
+    IMU imu;
     int tolerance = 10;
     int armSetpoint = 400;
 
@@ -53,6 +59,13 @@ public class Teleop extends OpMode {
 
         motorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                controlHubRotation //TODO: NEEDS TUNING (ask magnus for values)
+        ));
+        imu.initialize(parameters);
 //        motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        myArm = new Arm(hardwareMap, telemetry);
 //        while (!gamepad1.x) {
@@ -67,7 +80,7 @@ public class Teleop extends OpMode {
     }
 
     public void loop() {
-        mecanum.drive();
+        mecanum.drive(imu);
         currentPosition = Math.min(Math.max(0, currentPosition), 700);
 
         if (gamepad1.a) {
