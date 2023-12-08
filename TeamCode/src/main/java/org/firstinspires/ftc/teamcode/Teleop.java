@@ -17,6 +17,10 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 @TeleOp(name="Normal")
@@ -46,13 +50,13 @@ public class Teleop extends OpMode {
         motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorA.setTargetPositionTolerance(tolerance);
-        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         motorB.setPower(0);
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorB.setTargetPositionTolerance(tolerance);
-        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 //        wrist.setPosition(.8);
@@ -63,7 +67,7 @@ public class Teleop extends OpMode {
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                controlHubRotation //TODO: NEEDS TUNING (ask magnus for values)
+            controlHubRotation
         ));
         imu.initialize(parameters);
 //        motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -81,6 +85,7 @@ public class Teleop extends OpMode {
 
     public void loop() {
         mecanum.drive(imu);
+        telemetry.addData("YAW",imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         currentPosition = Math.min(Math.max(0, currentPosition), 700);
 
         if (gamepad1.a) {
@@ -95,23 +100,23 @@ public class Teleop extends OpMode {
             armUp();
         } else if(gamepad1.b) {
             armDown();
-        }
+        } 
 
         motorA.setPower(0);
         motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        motorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorA.setTargetPositionTolerance(3);
-
-        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorA.setTargetPositionTolerance(tolerance);
         motorA.setTargetPosition(currentPosition);
+        motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         motorB.setPower(0);
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        motorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorB.setTargetPositionTolerance(3);
-
-        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorB.setTargetPositionTolerance(tolerance);
         motorB.setTargetPosition(currentPosition);
+        motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         motorA.setPower(.75);
 

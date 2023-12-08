@@ -13,9 +13,9 @@ public class Constants {
 
     //Quartenion for ControlHUB
     public static final Quaternion controlHubRotation = new Quaternion(
+            1.0f,
             0.0f,
-            0.0f,
-            0.0f,
+            45.0f,
             0.0f,
             System.nanoTime()
     );
