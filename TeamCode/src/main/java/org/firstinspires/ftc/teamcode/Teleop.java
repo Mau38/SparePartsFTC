@@ -84,8 +84,13 @@ public class Teleop extends OpMode {
     }
 
     public void loop() {
+
+        if (gamepad1.back) {
+            imu.resetYaw();
+        }
+
         mecanum.drive(imu);
-        telemetry.addData("YAW",imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        telemetry.addData("YAW", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         if (USING_ARM) {
             currentPosition = Math.min(Math.max(0, currentPosition), 700);
