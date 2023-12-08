@@ -31,7 +31,6 @@ public class auto extends LinearOpMode {
         ElapsedTime et = new ElapsedTime();
 
         initializeMotors();
-
         waitForStart();
 
         //change to 100 and 3 to make it go forward for 3 seconds at 100% motor capacity
@@ -50,7 +49,7 @@ public class auto extends LinearOpMode {
         motorA.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorA.setTargetPositionTolerance(tolerance);
         motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorA.setTargetPosition(0); // Set the target position
+        motorA.setTargetPosition(100); // may need to change target position
         motorA.setPower(0.5);
 
         // Initialize motorB
@@ -59,7 +58,7 @@ public class auto extends LinearOpMode {
         motorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorB.setTargetPositionTolerance(tolerance);
         motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorB.setTargetPosition(0); // Set the target position
+        motorB.setTargetPosition(100); // may need to change target position
         motorB.setPower(0.5);
     }
 
@@ -73,7 +72,7 @@ public class auto extends LinearOpMode {
     }
 
     private void stopMotors() {
-        mecanum.stop(); // Assuming there is a stop method in your Drivetrain class
+        mecanum.stop();
 
         // Stop motorA
         motorA.setPower(0);
