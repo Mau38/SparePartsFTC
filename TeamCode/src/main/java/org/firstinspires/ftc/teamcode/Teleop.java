@@ -29,6 +29,8 @@ public class Teleop extends OpMode {
     private double armI = 0.01;
     private double armD = 0.001;
 
+    int currentPosition = 100;
+
     // Variables for PID control
     private double previousError = 0;
     private double integral = 0;
@@ -76,7 +78,6 @@ public class Teleop extends OpMode {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //motor.setTargetPositionTolerance(10);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
