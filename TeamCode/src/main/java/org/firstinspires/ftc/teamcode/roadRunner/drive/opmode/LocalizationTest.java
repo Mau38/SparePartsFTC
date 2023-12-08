@@ -16,9 +16,9 @@ import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
-    static final float X_FACTOR = .7f;
-    static final float Y_FACTOR = .7f;
-    static final float TURN_FACTOR = .7f;
+    static final float X_FACTOR = 1f;
+    static final float Y_FACTOR = 1f;
+    static final float TURN_FACTOR = 1f;
 
     @Override
     public void runOpMode() throws InterruptedException {

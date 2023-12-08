@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 public class Constants {
@@ -12,11 +14,14 @@ public class Constants {
     public static final double wristIntake = .2;
 
     //Quartenion for ControlHUB
-    public static final Quaternion controlHubRotation = new Quaternion(
-            1.0f,
-            0.0f,
-            45.0f,
-            0.0f,
-            System.nanoTime()
+    public static RevHubOrientationOnRobot revHubOrientation= new RevHubOrientationOnRobot(
+            // Check Values
+            new Quaternion(
+                    (float) Math.cos(.5 * 90),
+                    (float) Math.sin(.5 * 90),
+                    0.0f,
+                    0.0f,
+                    System.nanoTime()
+            )
     );
 }

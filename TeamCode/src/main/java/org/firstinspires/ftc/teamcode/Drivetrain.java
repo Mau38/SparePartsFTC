@@ -84,17 +84,34 @@ public class Drivetrain {
      */
 
     public void drive(IMU myIMU) {
-        myIMU.resetYaw();
-
         botAngles = myIMU.getRobotYawPitchRollAngles();
 
-        double botYaw = botAngles.getYaw(AngleUnit.RADIANS);
+        double botHeading = botAngles.getYaw(AngleUnit.RADIANS);
 
-        double rotX = gamepad.left_stick_x * Math.cos(-botYaw) - -gamepad.left_stick_y * Math.sin(-botYaw);
-        double rotY = gamepad.left_stick_x * Math.sin(-botYaw) + -gamepad.left_stick_y * Math.cos(-botYaw);
+        double x = gamepad.left_stick_x;
+        double y = -gamepad.left_stick_y;
+        double rx = gamepad.right_stick_x;
 
-        drive(rotX, rotY, -gamepad.right_stick_x);
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        motors.get(DriveMotors.BACK_RIGHT).setPower(backRightPower);
+        motors.get(DriveMotors.BACK_LEFT).setPower(backLeftPower);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower(frontRightPower);
+        motors.get(DriveMotors.FRONT_LEFT).setPower(frontLeftPower);
     }
+
 
     /**
      *

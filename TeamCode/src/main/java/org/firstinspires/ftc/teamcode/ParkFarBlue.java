@@ -7,18 +7,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name="ParkBlue", group="CompAutos")
-public class Park extends LinearOpMode {
+@Autonomous(name = "ParkFarBlue", group = "CompAutos")
+public class ParkFarBlue extends LinearOpMode {
 
+    public static double STRAFE_DIST = 30;
+    public static double FORWARD_DIST = 160;
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        TrajectorySequence t1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(3)
-                .turn((Math.PI / 2.0) * 1.5)
-                .forward(40)
-                .build();
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(new Pose2d()).strafeRight(STRAFE_DIST).forward(FORWARD_DIST).build();
 
         waitForStart();
 

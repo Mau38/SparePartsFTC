@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.roadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadRunner.trajectorysequence.TrajectorySequence;
 
-@Autonomous(name = "ParkRed", group = "CompAutos")
-public class ParkRed extends LinearOpMode {
+@Autonomous(name="ParkBlue", group="CompAutos")
+public class ParkBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -16,7 +16,7 @@ public class ParkRed extends LinearOpMode {
 
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(new Pose2d())
                 .forward(3)
-                .turn((-Math.PI / 2.0) * 1.5)
+                .turn((Math.PI / 2.0) * 1.5)
                 .forward(40)
                 .build();
 
