@@ -11,14 +11,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class ArmClawMovement {
 
-    DcMotorEx motorA, motorB;
-    private ServoImplEx claw1, claw2, wrist;
-
-    private final int tolerance = 10;
-
     public void init(HardwareMap hardwareMap) {
-        motorA = hardwareMap.get(DcMotorEx.class, "A1");
-        motorB = hardwareMap.get(DcMotorEx.class, "A2");
         claw1 = hardwareMap.get(ServoImplEx.class, "C1");
         claw2 = hardwareMap.get(ServoImplEx.class, "C2");
         wrist = hardwareMap.get(ServoImplEx.class, "W1");
