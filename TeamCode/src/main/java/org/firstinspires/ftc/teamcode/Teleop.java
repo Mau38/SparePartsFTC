@@ -27,10 +27,9 @@ public class Teleop extends OpMode {
     private ArmState currentArmState = ArmState.MANUAL_CONTROL;
 
     // PID constants for arm control
-    private double armP = 0.1;
-    private double armI = 0.01;
-    private double armD = 0.001;
-    
+    public static double armP = 0.1;
+    private static double armI = 0.01;
+    private static double armD = 0.001;
     // Variables for PID control
     private double previousError = 0;
     private double integral = 0;
