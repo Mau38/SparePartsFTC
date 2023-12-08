@@ -12,6 +12,8 @@ public class Teleop extends OpMode {
     private DcMotorEx motorA, motorB;
     private Servo claw1, claw2, wrist;
 
+    public static int currentPosition = 0;
+
     private int armSetpoint = 400;
     private int armIncrement = 50;
 
@@ -28,14 +30,10 @@ public class Teleop extends OpMode {
     private double armP = 0.1;
     private double armI = 0.01;
     private double armD = 0.001;
-
-    int currentPosition = 100;
-
+    
     // Variables for PID control
     private double previousError = 0;
     private double integral = 0;
-
-    int currentPosition = 100;
 
     @Override
     public void init() {
@@ -73,7 +71,7 @@ public class Teleop extends OpMode {
         telemetry.update();
     }
 
-    private void setupMotor(DcMotor motor) {
+    private void setupMotor(DcMotorEx motor) {
         motor.setPower(0);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
