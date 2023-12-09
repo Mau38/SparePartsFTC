@@ -11,10 +11,17 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class ArmClawMovement {
 
+    private ServoImplEx claw1, claw2, wrist;
+
+    private DcMotorEx motorB, motorA;
+
     public void init(HardwareMap hardwareMap) {
-        claw1 = hardwareMap.get(ServoImplEx.class, "C1");
-        claw2 = hardwareMap.get(ServoImplEx.class, "C2");
-        wrist = hardwareMap.get(ServoImplEx.class, "W1");
+        claw1 = hardwareMap.get(ServoImplEx.class, "leftPixel");
+        claw2 = hardwareMap.get(ServoImplEx.class, "rightPixel");
+        wrist = hardwareMap.get(ServoImplEx.class, "wrist");
+
+        motorB = hardwareMap.get(DcMotorEx.class, "A2");
+        motorA = hardwareMap.get(DcMotorEx.class, "A1");
 
         motorB.setDirection(DcMotorSimple.Direction.REVERSE);
         motorA.setDirection(DcMotorSimple.Direction.FORWARD);

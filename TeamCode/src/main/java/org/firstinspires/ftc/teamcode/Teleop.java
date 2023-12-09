@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Constants.ARM_UPPER_BOUND;
+import static org.firstinspires.ftc.teamcode.Constants.armClimbPosition;
+import static org.firstinspires.ftc.teamcode.Constants.armScorePosition;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+@Config
 @TeleOp(name = "Normal")
 public class Teleop extends OpMode {
 
@@ -21,7 +27,9 @@ public class Teleop extends OpMode {
     private enum ArmState {
         MANUAL_CONTROL,
         ARM_UP,
-        ARM_DOWN
+        ARM_DOWN,
+        ARM_SCORE,
+        ARM_CLIMB
     }
 
     private ArmState currentArmState = ArmState.MANUAL_CONTROL;
@@ -51,7 +59,6 @@ public class Teleop extends OpMode {
         resetArm();
 
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
     }
 
     @Override
@@ -82,7 +89,7 @@ public class Teleop extends OpMode {
         switch (currentArmState) {
             case MANUAL_CONTROL:
                 // Allow manual control of the arm
-                currentPosition += (int) (gamepad1.left_stick_y * armIncrement);
+                currentPosition += (int) (gamepad1.left_trigger * armIncrement);
                 break;
             case ARM_UP:
                 // Use PID control to move the arm to the desired setpoint
@@ -92,6 +99,12 @@ public class Teleop extends OpMode {
                 // Use PID control to move the arm to the desired setpoint
                 pidControlArm();
                 break;
+            case ARM_CLIMB:
+                currentPosition = armClimbPosition;
+                break;
+            case ARM_SCORE:
+                currentPosition = armScorePosition;
+                break;
         }
 
         // Switch arm state based on button inputs
@@ -99,19 +112,24 @@ public class Teleop extends OpMode {
             currentArmState = ArmState.ARM_UP;
         } else if (gamepad1.dpad_down) {
             currentArmState = ArmState.ARM_DOWN;
+        } else if (gamepad1.a){
+            currentArmState = ArmState.ARM_SCORE;
+        } else if (gamepad1.start) {
+            currentArmState = ArmState.ARM_CLIMB;
         } else {
             currentArmState = ArmState.MANUAL_CONTROL;
         }
     }
 
     private void updateArmPosition() {
-        currentPosition = Math.min(Math.max(0, currentPosition), 700);
+        currentPosition = Math.max(Math.min(ARM_UPPER_BOUND, currentPosition), ARM_UPPER_BOUND);
 
         motorA.setTargetPosition(currentPosition);
         motorB.setTargetPosition(currentPosition);
 
         motorA.setPower(0.75);
         motorB.setPower(0.75);
+        telemetry.addData("CurrentPosition", currentPosition);
     }
 
     private void pidControlArm() {

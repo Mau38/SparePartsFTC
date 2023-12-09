@@ -8,7 +8,11 @@ public class Constants {
     public static final int armStow = 400;
     public static final int startingArmPos = 100;
     public static final int armDropOff = 564;
+    public static int armScorePosition = -730;
+    public static int armClimbPosition = -460;
     public static final int armIntake = 1;
+    public static final int ARM_UPPER_BOUND = -100;
+    public static final int ARM_LOWER_BOUND = -800;
     public static final double wristStowOrOutTake = .9;
     public static final double wristIntake = .2;
 
