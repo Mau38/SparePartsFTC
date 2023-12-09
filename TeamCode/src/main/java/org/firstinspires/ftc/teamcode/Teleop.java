@@ -1,24 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Constants.armDropOff;
-import static org.firstinspires.ftc.teamcode.Constants.armIntake;
-import static org.firstinspires.ftc.teamcode.Constants.revHubOrientation;
-import static org.firstinspires.ftc.teamcode.Constants.startingArmPos;
-import static org.firstinspires.ftc.teamcode.Constants.wristIntake;
-import static org.firstinspires.ftc.teamcode.Constants.wristStowOrOutTake;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp(name = "ImprovedTeleop")
+@TeleOp(name = "Normal")
 public class Teleop extends OpMode {
 
     private Drivetrain mecanum;
-    private DcMotor motorA, motorB;
+    private DcMotorEx motorA, motorB;
     private Servo claw1, claw2, wrist;
 
     private int armSetpoint = 400;
@@ -42,12 +33,13 @@ public class Teleop extends OpMode {
     private double previousError = 0;
     private double integral = 0;
 
+    int currentPosition = 100;
 
     @Override
     public void init() {
         mecanum = new Drivetrain(gamepad1, hardwareMap);
-        motorA = hardwareMap.get(DcMotor.class, "A1");
-        motorB = hardwareMap.get(DcMotor.class, "A2");
+        motorA = hardwareMap.get(DcMotorEx.class, "A1");
+        motorB = hardwareMap.get(DcMotorEx.class, "A2");
         claw1 = hardwareMap.get(Servo.class, "leftPixel");
         claw2 = hardwareMap.get(Servo.class, "rightPixel");
         wrist = hardwareMap.get(Servo.class, "wrist");
@@ -84,7 +76,7 @@ public class Teleop extends OpMode {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor.setTargetPositionTolerance(10);
+        //motor.setTargetPositionTolerance(10);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
