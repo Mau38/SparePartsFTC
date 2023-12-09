@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.Constants.ARM_LOWER_BOUND;
 import static org.firstinspires.ftc.teamcode.Constants.ARM_UPPER_BOUND;
 import static org.firstinspires.ftc.teamcode.Constants.armClimbPosition;
+import static org.firstinspires.ftc.teamcode.Constants.armIntake;
 import static org.firstinspires.ftc.teamcode.Constants.armScorePosition;
 import static org.firstinspires.ftc.teamcode.Constants.revHubOrientation;
+import static org.firstinspires.ftc.teamcode.Constants.startingArmPos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -26,7 +28,7 @@ public class Teleop extends OpMode {
     private DcMotorEx motorA, motorB;
     private Servo claw1, claw2, wrist;
 
-    public static int currentPosition = 0;
+    public static int currentPosition = startingArmPos;
 
     private int armSetpoint = 400;
     private int armIncrement = 50;
@@ -50,6 +52,9 @@ public class Teleop extends OpMode {
     // Variables for PID control
     private double previousError = 0;
     private double integral = 0;
+
+    public static double wristOuttake = .2;
+    public static double wristIntake = -.2;
 
     @Override
     public void init() {
@@ -83,7 +88,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-//        mecanum.drive();
+        //mecanum.drive();
         if (gamepad1.back) {
             imu.resetYaw();
         }
@@ -94,8 +99,11 @@ public class Teleop extends OpMode {
         if (USING_ARM) {
             handleArmControls();
             updateArmPosition();
+            handleArmControls();
 
             handleClawControls();
+
+            IntakeMode();
 
             telemetry.addData("Encoder PositionA", motorA.getCurrentPosition());
             telemetry.addData("Encoder PositionB", motorB.getCurrentPosition());
@@ -174,6 +182,16 @@ public class Teleop extends OpMode {
         previousError = error;
     }
 
+
+    //add separate claw code
+
+    private void IntakeMode(){
+        if (gamepad1.x) {
+            IntakeON();
+        } else if (gamepad1.b) {
+            IntakeOFF();
+        }
+    }
     private void handleClawControls() {
         if (gamepad1.left_trigger > 0) {
             openClaw();
@@ -194,10 +212,27 @@ public class Teleop extends OpMode {
 
     private void openClaw() {
         setClawPosition(0.2);
+        armDown();
     }
 
     private void closeClaw() {
         setClawPosition(0.4);
+        armUp();
+    }
+
+    private void IntakeON() {
+        setClawPosition(0.2);
+//        armDown();
+        currentPosition = armIntake;
+        wrist.setPosition(wristIntake);
+    }
+
+    private void IntakeOFF() {
+
+        setClawPosition(0.4);
+//        armUp();
+        currentPosition = armScorePosition;
+        wrist.setPosition(wristOuttake);
     }
 
     private void setClawPosition(double position) {

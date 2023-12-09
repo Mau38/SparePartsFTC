@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 public class Constants {
     public static final int tolerance = 10;
     public static final int armStow = 400;
-    public static final int startingArmPos = 100;
+    public static final int startingArmPos = -50;
     public static final int armDropOff = 564;
     public static int armScorePosition = -730;
     public static int armClimbPosition = -460;
@@ -17,6 +17,7 @@ public class Constants {
     public static int ARM_LOWER_BOUND = -800;
     public static final double wristStowOrOutTake = .9;
     public static final double wristIntake = .2;
+//    public static int armTeleopStartPosition = -50;
 
     //Quartenion for ControlHUB
     public static RevHubOrientationOnRobot revHubOrientation= new RevHubOrientationOnRobot(
