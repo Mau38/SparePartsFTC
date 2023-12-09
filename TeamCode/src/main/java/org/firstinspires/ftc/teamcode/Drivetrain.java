@@ -20,9 +20,9 @@ import java.util.Map;
  */
 public class Drivetrain {
 
-    final double X_FACTOR = .7;
-    final double Y_FACTOR = .7;
-    final double TURN_FACTOR = .7;
+    final double X_FACTOR = 1;
+    final double Y_FACTOR = 1;
+    final double TURN_FACTOR = 1;
     private Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
     private Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
 
