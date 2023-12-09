@@ -10,11 +10,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 @Config
 @TeleOp(name = "Normal")
 public class Teleop extends OpMode {
 
     private Drivetrain mecanum;
+
+    public static boolean USING_ARM = true;
     private DcMotorEx motorA, motorB;
     private Servo claw1, claw2, wrist;
 
@@ -45,18 +50,23 @@ public class Teleop extends OpMode {
     @Override
     public void init() {
         mecanum = new Drivetrain(gamepad1, hardwareMap);
-        motorA = hardwareMap.get(DcMotorEx.class, "A1");
-        motorB = hardwareMap.get(DcMotorEx.class, "A2");
-        claw1 = hardwareMap.get(Servo.class, "leftPixel");
-        claw2 = hardwareMap.get(Servo.class, "rightPixel");
-        wrist = hardwareMap.get(Servo.class, "wrist");
 
-        motorB.setDirection(DcMotor.Direction.REVERSE);
+        
 
-        setupMotor(motorA);
-        setupMotor(motorB);
+        if (USING_ARM) {
+            motorA = hardwareMap.get(DcMotorEx.class, "A1");
+            motorB = hardwareMap.get(DcMotorEx.class, "A2");
+            claw1 = hardwareMap.get(Servo.class, "leftPixel");
+            claw2 = hardwareMap.get(Servo.class, "rightPixel");
+            wrist = hardwareMap.get(Servo.class, "wrist");
 
-        resetArm();
+            motorB.setDirection(DcMotor.Direction.REVERSE);
+
+            setupMotor(motorA);
+            setupMotor(motorB);
+
+            resetArm();
+        }
 
         telemetry.addData("Status", "Initialized");
     }
@@ -65,15 +75,26 @@ public class Teleop extends OpMode {
     public void loop() {
         mecanum.drive();
 
-        handleArmControls();
-        updateArmPosition();
+        if (gamepad1.back) {
+            imu.resetYaw();
+        }
 
-        handleClawControls();
+        mecanum.drive(imu);
+        telemetry.addData("YAW", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
-        telemetry.addData("Encoder PositionA", motorA.getCurrentPosition());
-        telemetry.addData("Encoder PositionB", motorB.getCurrentPosition());
-        telemetry.addData("Claw Position", claw1.getPosition());
-        telemetry.addData("Wrist Position", wrist.getPosition());
+        if (USING_ARM) {
+            handleArmControls();
+            updateArmPosition();
+
+            handleClawControls();
+
+            telemetry.addData("Encoder PositionA", motorA.getCurrentPosition());
+            telemetry.addData("Encoder PositionB", motorB.getCurrentPosition());
+            telemetry.addData("Claw Position", claw1.getPosition());
+            telemetry.addData("Wrist Position", wrist.getPosition());
+        }
+
+
         telemetry.update();
     }
 
