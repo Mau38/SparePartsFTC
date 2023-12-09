@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,66 +16,71 @@ import org.firstinspires.ftc.teamcode.roadRunner.util.Encoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The Drivetrain class represents the robot's drivetrain system, including motor control and movement.
+ */
+@Config
 public class Drivetrain {
-
-    final double X_FACTOR = .7;
-    final double Y_FACTOR = .7;
-    final double TURN_FACTOR = .7;
-    Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
-    Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
-    Gamepad gamepad;
-    HardwareMap myHardwarmap;
+    public static double STRAFING_MULTIPLIER = 1.1;
+    final double X_FACTOR = 1;
+    final double Y_FACTOR = 1;
+    final double TURN_FACTOR = 1;
+    private Map<DriveMotors, DcMotor> motors = new HashMap<DriveMotors, DcMotor>();
+    private Map<EncoderNames, Encoder> encoders = new HashMap<EncoderNames, Encoder>();
 
     YawPitchRollAngles botAngles;
+    private Gamepad gamepad;
+    private HardwareMap hardwareMap;
 
-    public Drivetrain(Gamepad _gamepad, HardwareMap _myHardwarmap) {
-        gamepad = _gamepad;
-        myHardwarmap = _myHardwarmap;
+    /**
+     * Constructs a Drivetrain instance.
+     *
+     * @param gamepad     The gamepad for manual control.
+     * @param hardwareMap The HardwareMap for accessing motors.
+     */
+    public Drivetrain(Gamepad gamepad, HardwareMap hardwareMap) {
+        this.gamepad = gamepad;
+        this.hardwareMap = hardwareMap;
         initMotors();
         initEncoders();
     }
-    public void initMotors() {
-        motors.put(DriveMotors.BACK_RIGHT, myHardwarmap.dcMotor.get("backRight"));
-        motors.put(DriveMotors.BACK_LEFT, myHardwarmap.dcMotor.get("backLeft"));
-        motors.put(DriveMotors.FRONT_RIGHT, myHardwarmap.dcMotor.get("frontRight"));
-        motors.put(DriveMotors.FRONT_LEFT, myHardwarmap.dcMotor.get("frontLeft"));
 
-        motors.get(DriveMotors.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
-        motors.get(DriveMotors.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+    /**
+     * Initializes the motors using the hardware map.
+     * Provides basic error handling for motor initialization.
+     */
+    private void initMotors() {
+        try {
+            motors.put(DriveMotors.BACK_RIGHT, hardwareMap.dcMotor.get("backRight"));
+            motors.put(DriveMotors.BACK_LEFT, hardwareMap.dcMotor.get("backLeft"));
+            motors.put(DriveMotors.FRONT_RIGHT, hardwareMap.dcMotor.get("frontRight"));
+            motors.put(DriveMotors.FRONT_LEFT, hardwareMap.dcMotor.get("frontLeft"));
+
+            motors.get(DriveMotors.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+            motors.get(DriveMotors.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+        } catch (Exception e) {
+            // Log or handle the exception accordingly
+            e.printStackTrace();
+        }
     }
 
     public void initEncoders() {
-        encoders.put(EncoderNames.RIGHT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backRight")));
-        encoders.put(EncoderNames.LEFT, new Encoder(myHardwarmap.get(DcMotorEx.class, "backLeft")));
-        encoders.put(EncoderNames.BACK, new Encoder(myHardwarmap.get(DcMotorEx.class, "frontRight")));
+        encoders.put(EncoderNames.RIGHT, new Encoder(hardwareMap.get(DcMotorEx.class, "backRight")));
+        encoders.put(EncoderNames.LEFT, new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft")));
+        encoders.put(EncoderNames.BACK, new Encoder(hardwareMap.get(DcMotorEx.class, "frontRight")));
 
         encoders.get(EncoderNames.BACK).setDirection(Encoder.Direction.REVERSE);
     }
 
+    /**
+     * Drives the robot based on the current gamepad input.
+     */
     public void drive() {
         double x = gamepad.left_stick_x * X_FACTOR;
         double y = -gamepad.left_stick_y * Y_FACTOR;
         double turn = -gamepad.right_stick_x * TURN_FACTOR;
 
-        double theta = Math.atan2(y, x);
-        double power = Math.hypot(x, y);
-
-        //double D1power = Range.clip(x + y + turn)
-
-        double sinA = Math.sin(theta - Math.PI / 4);
-        double cosA = Math.cos(theta - Math.PI / 4);
-        double max = Math.max(Math.abs(sinA), Math.abs(cosA));
-
-        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + turn);
-        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - turn);
-        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + turn);
-        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - turn);
-
-        if ((power + Math.abs(turn)) > 1) {
-            motors.forEach((name, motor) -> {
-                motor.setPower(motor.getPower() / (power + turn));
-            });
-        }
+        drive(x, y, turn);
     }
 
     /**
@@ -95,7 +101,7 @@ public class Drivetrain {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
+        rotX = rotX * STRAFING_MULTIPLIER;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
@@ -112,16 +118,15 @@ public class Drivetrain {
         motors.get(DriveMotors.FRONT_LEFT).setPower(frontLeftPower);
     }
 
-
     /**
+     * Drives the robot with specified joystick values.
      *
-     * @param x
-     * @param y
-     * @param turn
+     * @param x    The x-component of joystick input.
+     * @param y    The y-component of joystick input.
+     * @param turn The turn (rotation) input.
      */
 
     public void drive(double x, double y, double turn) {
-
         double theta = Math.atan2(y, x);
         double power = Math.hypot(x, y);
 
@@ -129,32 +134,40 @@ public class Drivetrain {
         double cosA = Math.cos(theta - Math.PI / 4);
         double max = Math.max(Math.abs(sinA), Math.abs(cosA));
 
-        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + turn);
-        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - turn);
-        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + turn);
-        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - turn);
+        // Set power to each motor based on joystick input and turn
+        motors.get(DriveMotors.BACK_RIGHT).setPower((power * cosA / max) + turn);
+        motors.get(DriveMotors.BACK_LEFT).setPower((power * sinA / max) - turn);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower((power * sinA / max) + turn);
+        motors.get(DriveMotors.FRONT_LEFT).setPower((power * cosA / max) - turn);
 
+        // If the total power exceeds 1, scale down all motors to prevent overdriving
         if ((power + Math.abs(turn)) > 1) {
-            motors.forEach((name, motor) -> {
-                motor.setPower(motor.getPower() / (power + turn));
-            });
+            motors.forEach((name, motor) -> motor.setPower(motor.getPower() / (power + turn)));
         }
     }
 
     /**
+     * Rotates the robot by a specified angle with a given power.
      *
-     * @param theta in degrees [-180, 180]
-     * @param power in range [-1, 1]
+     * @param theta The angle in degrees [-180, 180].
+     * @param power The power in the range [-1, 1].
      */
-    public void rotateBy(double theta, double power){
-        double sinA = Math.sin(theta - Math.PI / 4);
-        double cosA = Math.cos(theta - Math.PI / 4);
+    public void rotateBy(double theta, double power) {
+        double sinA = Math.sin(Math.toRadians(theta) - Math.PI / 4);
+        double cosA = Math.cos(Math.toRadians(theta) - Math.PI / 4);
         double max = Math.max(Math.abs(sinA), Math.abs(cosA));
 
-        motors.get(DriveMotors.BACK_RIGHT).setPower(power * cosA/max + .5);
-        motors.get(DriveMotors.BACK_LEFT).setPower(power * sinA/max - .5);
-        motors.get(DriveMotors.FRONT_RIGHT).setPower(power * sinA/max + .5);
-        motors.get(DriveMotors.FRONT_LEFT).setPower(power * cosA/max - .5);
+        // Set power to each motor for rotation
+        motors.get(DriveMotors.BACK_RIGHT).setPower((power * cosA / max) + 0.5);
+        motors.get(DriveMotors.BACK_LEFT).setPower((power * sinA / max) - 0.5);
+        motors.get(DriveMotors.FRONT_RIGHT).setPower((power * sinA / max) + 0.5);
+        motors.get(DriveMotors.FRONT_LEFT).setPower((power * cosA / max) - 0.5);
     }
 
+    //test, might not work
+    
+    public void stop() {
+        // Set the power of all motors to zero
+        motors.forEach((name, motor) -> motor.setPower(0));
+    }
 }

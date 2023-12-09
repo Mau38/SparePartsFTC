@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class LoggingUtil {
     public static final File ROAD_RUNNER_FOLDER =
-            new File(AppUtil.ROOT_FOLDER + "/RoadRunner/");
+            AppUtil.ROOT_FOLDER;
 
     private static final long LOG_QUOTA = 25 * 1024 * 1024; // 25MB log quota for now
 
