@@ -37,10 +37,12 @@ public class Teleop extends OpMode {
     // Enum for different arm states
     private enum ArmState {
         MANUAL_CONTROL,
-        ARM_UP,
-        ARM_DOWN,
-        ARM_SCORE,
-        ARM_CLIMB
+        ARM_MOVING_UP,
+        ARM_MOVING_DOWN,
+        INTAKE_STARTED,
+        INTAKE_STOPPED,
+        ARM_CLIMB,
+        ARM_SCORE
     }
 
     private ArmState currentArmState = ArmState.MANUAL_CONTROL;
@@ -128,13 +130,19 @@ public class Teleop extends OpMode {
                 // Allow manual control of the arm
                 currentPosition += (int) (gamepad1.left_trigger * armIncrement);
                 break;
-            case ARM_UP:
+            case ARM_MOVING_UP:
                 // Use PID control to move the arm to the desired setpoint
                 pidControlArm();
                 break;
-            case ARM_DOWN:
+            case ARM_MOVING_DOWN:
                 // Use PID control to move the arm to the desired setpoint
                 pidControlArm();
+                break;
+            case INTAKE_STARTED:
+                // Intake mode started
+                break;
+            case INTAKE_STOPPED:
+                // Intake mode stopped
                 break;
             case ARM_CLIMB:
                 currentPosition = armClimbPosition;
@@ -146,9 +154,9 @@ public class Teleop extends OpMode {
 
         // Switch arm state based on button inputs
         if (gamepad1.dpad_up) {
-            currentArmState = ArmState.ARM_UP;
+            currentArmState = ArmState.ARM_MOVING_UP;
         } else if (gamepad1.dpad_down) {
-            currentArmState = ArmState.ARM_DOWN;
+            currentArmState = ArmState.ARM_MOVING_DOWN;
         } else if (gamepad1.a){
             currentArmState = ArmState.ARM_SCORE;
         } else if (gamepad1.start) {
@@ -182,16 +190,14 @@ public class Teleop extends OpMode {
         previousError = error;
     }
 
-
-    //add separate claw code
-
     private void IntakeMode(){
         if (gamepad1.x) {
-            IntakeON();
+            startIntake();
         } else if (gamepad1.b) {
-            IntakeOFF();
+            stopIntake();
         }
     }
+
     private void handleClawControls() {
         if (gamepad1.left_trigger > 0) {
             openClaw();
@@ -200,39 +206,38 @@ public class Teleop extends OpMode {
         }
     }
 
-    private void armUp() {
-        currentArmState = ArmState.ARM_UP;
-        wrist.setPosition(Constants.wristStowOrOutTake);
+    private void startIntake() {
+        setClawPosition(0.1);
+        currentPosition = armIntake;
+        wrist.setPosition(wristIntake);
+        currentArmState = ArmState.INTAKE_STARTED;
     }
 
-    private void armDown() {
-        currentArmState = ArmState.ARM_DOWN;
-        wrist.setPosition(Constants.wristIntake);
+    private void stopIntake() {
+        setClawPosition(0.5);
+        currentPosition = armScorePosition;
+        wrist.setPosition(wristOuttake);
+        currentArmState = ArmState.INTAKE_STOPPED;
     }
 
     private void openClaw() {
-        setClawPosition(0.2);
-        armDown();
+        setClawPosition(0.1);
+        moveArmDown();
     }
 
     private void closeClaw() {
-        setClawPosition(0.4);
-        armUp();
+        setClawPosition(0.5);
+        moveArmUp();
     }
 
-    private void IntakeON() {
-        setClawPosition(0.2);
-//        armDown();
-        currentPosition = armIntake;
-        wrist.setPosition(wristIntake);
+    private void moveArmUp() {
+        currentArmState = ArmState.ARM_MOVING_UP;
+        wrist.setPosition(Constants.wristStowOrOutTake);
     }
 
-    private void IntakeOFF() {
-
-        setClawPosition(0.4);
-//        armUp();
-        currentPosition = armScorePosition;
-        wrist.setPosition(wristOuttake);
+    private void moveArmDown() {
+        currentArmState = ArmState.ARM_MOVING_DOWN;
+        wrist.setPosition(Constants.wristIntake);
     }
 
     private void setClawPosition(double position) {

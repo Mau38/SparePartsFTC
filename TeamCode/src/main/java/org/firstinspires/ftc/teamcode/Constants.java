@@ -6,7 +6,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 @Config
 public class Constants {
-    public static final int tolerance = 10;
     public static final int armStow = 400;
     public static final int startingArmPos = -50;
     public static final int armDropOff = 564;
