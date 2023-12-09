@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
+@Config
 public class Constants {
     public static final int tolerance = 10;
     public static final int armStow = 400;
@@ -10,9 +12,9 @@ public class Constants {
     public static final int armDropOff = 564;
     public static int armScorePosition = -730;
     public static int armClimbPosition = -460;
-    public static final int armIntake = 1;
-    public static final int ARM_UPPER_BOUND = -100;
-    public static final int ARM_LOWER_BOUND = -800;
+    public static int armIntake = -50;
+    public static int ARM_UPPER_BOUND = -50;
+    public static int ARM_LOWER_BOUND = -800;
     public static final double wristStowOrOutTake = .9;
     public static final double wristIntake = .2;
 

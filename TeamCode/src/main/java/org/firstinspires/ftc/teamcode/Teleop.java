@@ -1,20 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Constants.ARM_LOWER_BOUND;
 import static org.firstinspires.ftc.teamcode.Constants.ARM_UPPER_BOUND;
 import static org.firstinspires.ftc.teamcode.Constants.armClimbPosition;
 import static org.firstinspires.ftc.teamcode.Constants.armScorePosition;
+import static org.firstinspires.ftc.teamcode.Constants.revHubOrientation;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
-@TeleOp(name = "Normal")
+@TeleOp(name = "CompTeleOp", group = "Comp")
 public class Teleop extends OpMode {
 
     private Drivetrain mecanum;
@@ -27,6 +30,7 @@ public class Teleop extends OpMode {
 
     private int armSetpoint = 400;
     private int armIncrement = 50;
+    private IMU imu;
 
     // Enum for different arm states
     private enum ArmState {
@@ -51,7 +55,13 @@ public class Teleop extends OpMode {
     public void init() {
         mecanum = new Drivetrain(gamepad1, hardwareMap);
 
-        
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters parameters = new IMU.Parameters(
+                revHubOrientation
+        );
+        imu.initialize(parameters);
+        imu.resetYaw();
 
         if (USING_ARM) {
             motorA = hardwareMap.get(DcMotorEx.class, "A1");
@@ -73,8 +83,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        mecanum.drive();
-
+//        mecanum.drive();
         if (gamepad1.back) {
             imu.resetYaw();
         }
@@ -93,7 +102,6 @@ public class Teleop extends OpMode {
             telemetry.addData("Claw Position", claw1.getPosition());
             telemetry.addData("Wrist Position", wrist.getPosition());
         }
-
 
         telemetry.update();
     }
@@ -143,7 +151,7 @@ public class Teleop extends OpMode {
     }
 
     private void updateArmPosition() {
-        currentPosition = Math.max(Math.min(ARM_UPPER_BOUND, currentPosition), ARM_UPPER_BOUND);
+        currentPosition = Math.max(Math.min(ARM_UPPER_BOUND, currentPosition), ARM_LOWER_BOUND);
 
         motorA.setTargetPosition(currentPosition);
         motorB.setTargetPosition(currentPosition);
@@ -151,6 +159,7 @@ public class Teleop extends OpMode {
         motorA.setPower(0.75);
         motorB.setPower(0.75);
         telemetry.addData("CurrentPosition", currentPosition);
+
     }
 
     private void pidControlArm() {

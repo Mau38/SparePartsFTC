@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,8 +19,9 @@ import java.util.Map;
 /**
  * The Drivetrain class represents the robot's drivetrain system, including motor control and movement.
  */
+@Config
 public class Drivetrain {
-
+    public static double STRAFING_MULTIPLIER = 1.1;
     final double X_FACTOR = 1;
     final double Y_FACTOR = 1;
     final double TURN_FACTOR = 1;
@@ -99,7 +101,7 @@ public class Drivetrain {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
+        rotX = rotX * STRAFING_MULTIPLIER;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
