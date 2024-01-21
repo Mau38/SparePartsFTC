@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Teleop extends OpMode {
 
     private Drivetrain mecanum;
+    private ArmClawMovement clawcontrol;
 
     public static boolean USING_ARM = true;
     private DcMotorEx motorA, motorB;
@@ -54,6 +55,7 @@ public class Teleop extends OpMode {
     @Override
     public void init() {
         mecanum = new Drivetrain(gamepad1, hardwareMap);
+        clawcontrol = new ArmClawMovement();
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -95,7 +97,7 @@ public class Teleop extends OpMode {
             handleArmControls();
             updateArmPosition();
 
-            handleClawControls();
+            clawcontrol.handleClawControls(gamepad1);
 
             telemetry.addData("Encoder PositionA", motorA.getCurrentPosition());
             telemetry.addData("Encoder PositionB", motorB.getCurrentPosition());
@@ -174,14 +176,6 @@ public class Teleop extends OpMode {
         previousError = error;
     }
 
-    private void handleClawControls() {
-        if (gamepad1.left_trigger > 0) {
-            openClaw();
-        } else if (gamepad1.right_trigger > 0) {
-            closeClaw();
-        }
-    }
-
     private void armUp() {
         currentArmState = ArmState.ARM_UP;
         wrist.setPosition(Constants.wristStowOrOutTake);
@@ -190,19 +184,6 @@ public class Teleop extends OpMode {
     private void armDown() {
         currentArmState = ArmState.ARM_DOWN;
         wrist.setPosition(Constants.wristIntake);
-    }
-
-    private void openClaw() {
-        setClawPosition(0.2);
-    }
-
-    private void closeClaw() {
-        setClawPosition(0.4);
-    }
-
-    private void setClawPosition(double position) {
-        claw1.setPosition(position);
-        claw2.setPosition(position);
     }
 
     private void resetArm() {
